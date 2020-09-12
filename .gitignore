@@ -6,6 +6,7 @@ tmp/
 obj/
 *.sln
 *.suo
+*.csproj
 
 *_i.c
 *_p.c
