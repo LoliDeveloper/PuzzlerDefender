@@ -20,6 +20,7 @@ namespace PuzzlerDefender
         Button startButton;
         Intent intent;
         TextView hpBarText;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBean)

@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using PuzzlerDefender.Enums;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PuzzlerDefender
 {
@@ -31,6 +33,8 @@ namespace PuzzlerDefender
 
         ViewGroup.LayoutParams[] arrRightsLayouts = new ViewGroup.LayoutParams[9];
 
+        ProgressBar determinateBar;
+
         int rightColor = 0;
         TypeDiff typeDiff;
         int moveCounter;
@@ -39,68 +43,89 @@ namespace PuzzlerDefender
         PersonData personData;
         string backingFile = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "data.json");
 
+        Button loadBarButton; // TEST LOADBAR
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             // Create your application here
             SetContentView(Resource.Layout.gameMain);
-
-            GetPersonDataAsync();
+            one = (Button)FindViewById(Resource.Id.one);
+            two = (Button)FindViewById(Resource.Id.two);
+            three = (Button)FindViewById(Resource.Id.three);
+            four = (Button)FindViewById(Resource.Id.four);
+            five = (Button)FindViewById(Resource.Id.five);
+            six = (Button)FindViewById(Resource.Id.six);
+            seven = (Button)FindViewById(Resource.Id.seven);
+            eight = (Button)FindViewById(Resource.Id.eight);
+            emptyTextView = (TextView)FindViewById(Resource.Id.emptyTextView);
+            diffText = (TextView)FindViewById(Resource.Id.diffText);
+            backButtonGameMain = (Button)FindViewById(Resource.Id.backButtonGameMain);
+            determinateBar = (ProgressBar)FindViewById(Resource.Id.determinateBar);
+        }
+        protected override void OnStart()
+        {
+            base.OnStart();
 
             typeDiff = JsonConvert.DeserializeObject<TypeDiff>(Intent.GetStringExtra("TypeDiff"));
             if (typeDiff > 0)
             {
                 MessageAndroid.ShortAlert(typeDiff.ToString());
             }
-
-            one = (Button)FindViewById(Resource.Id.one);
             arrNums[0] = one;
             arrRightsLayouts[0] = one.LayoutParameters;
             one.SetOnClickListener(this);
-            two = (Button)FindViewById(Resource.Id.two);
             arrNums[1] = two;
             arrRightsLayouts[1] = two.LayoutParameters;
             two.SetOnClickListener(this);
-            three = (Button)FindViewById(Resource.Id.three);
             arrNums[2] = three;
             arrRightsLayouts[2] = three.LayoutParameters;
             three.SetOnClickListener(this);
-            four = (Button)FindViewById(Resource.Id.four);
             arrNums[3] = four;
             arrRightsLayouts[3] = four.LayoutParameters;
             four.SetOnClickListener(this);
-            five = (Button)FindViewById(Resource.Id.five);
             arrNums[4] = five;
             arrRightsLayouts[4] = five.LayoutParameters;
             five.SetOnClickListener(this);
-            six = (Button)FindViewById(Resource.Id.six);
             arrNums[5] = six;
             arrRightsLayouts[5] = six.LayoutParameters;
             six.SetOnClickListener(this);
-            seven = (Button)FindViewById(Resource.Id.seven);
             arrNums[6] = seven;
             arrRightsLayouts[6] = seven.LayoutParameters;
             seven.SetOnClickListener(this);
-            eight = (Button)FindViewById(Resource.Id.eight);
             arrNums[7] = eight;
             arrRightsLayouts[7] = eight.LayoutParameters;
             eight.SetOnClickListener(this);
-            emptyTextView = (TextView)FindViewById(Resource.Id.emptyTextView);
             arrRightsLayouts[8] = emptyTextView.LayoutParameters;
             emptyTextView.SetOnClickListener(this);
-
-            diffText = (TextView)FindViewById(Resource.Id.diffText);
             diffText.Text = typeDiff.ToString();
-            backButtonGameMain = (Button)FindViewById(Resource.Id.backButtonGameMain);
             backButtonGameMain.Click += BackButtonGameMain_Click;
+
+            determinateBar.Progress = 0;
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            GetPersonDataAsync();
             randomizeButton();
-            UpdateColorButton();
         }
 
         private void BackButtonGameMain_Click(object sender, EventArgs e)
         {
             OnBackPressed();
+        }
+        private async void IncreaseBarAsync(int toThat)
+        {
+            await Task.Run(()=> IncreaseBar(toThat));
+        }
+        private void IncreaseBar(int toThat)
+        {
+            while (determinateBar.Progress < toThat)
+            {
+                determinateBar.Progress += 1;
+                Thread.Sleep(10);
+            }
         }
 
         public void OnClick(View v)
@@ -206,10 +231,8 @@ namespace PuzzlerDefender
             }
             if (rightColor == 8)
             {
-                HitDamage(typeDiff);
                 MessageAndroid.ShortAlert($"Congratulations! You Win at {moveCounter} moves!\n You Damage is {typeDiff}");
-                randomizeButton();
-                UpdateColorButton();
+                HitDamage(typeDiff);
             }
         }
 
@@ -227,18 +250,21 @@ namespace PuzzlerDefender
                     if (moveCounter < personData.EasySecRecord)
                     {
                         personData.EasySecRecord = moveCounter;
+                        MessageAndroid.ShortAlert("New Record!");
                     }
                     break;
                 case TypeDiff.Medum:
                     if (moveCounter < personData.MediumSecRecord)
                     {
                         personData.MediumSecRecord = moveCounter;
+                        MessageAndroid.ShortAlert("New Record!");
                     }
                     break;
                 case TypeDiff.Hard:
                     if (moveCounter < personData.HardSecRecord)
                     {
                         personData.HardSecRecord = moveCounter;
+                        MessageAndroid.ShortAlert("New Record!");
                     }
                     break;
             }
@@ -248,17 +274,25 @@ namespace PuzzlerDefender
             {
                 await writer.WriteLineAsync(serializeString); //Async
             }
+            randomizeButton();
         }
 
         private async void GetPersonDataAsync()
         {
+            await Task.Run(()=> GetPersonData());
+        }
+        private void GetPersonData()
+        {
+            IncreaseBarAsync(50);
             string jsonString;
 
             using (var reader = File.ReadAllTextAsync(backingFile))
             {
-                jsonString = await reader;
+                jsonString = reader.Result;
             }
             personData = JsonConvert.DeserializeObject<PersonData>(jsonString);
+            Thread.Sleep(1500);
+            IncreaseBarAsync(100);
         }
         public override void OnBackPressed()
         {
