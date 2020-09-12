@@ -32,3 +32,4 @@ obj/
 *.pidb
 *.log
 *.scc
+Resources/Resource.designer.cs
