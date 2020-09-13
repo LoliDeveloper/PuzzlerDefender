@@ -6,6 +6,7 @@ using Android.Support.V7.App;
 using Android.Widget;
 using Newtonsoft.Json;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace PuzzlerDefender
 {
@@ -20,40 +21,52 @@ namespace PuzzlerDefender
         Button startButton;
         Intent intent;
         TextView hpBarText;
+        RelativeLayout relLayHpBar;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            base.OnCreate(savedInstanceState);
             if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBean)
             {
                 Window.SetFlags(Android.Views.WindowManagerFlags.Fullscreen,
                                 Android.Views.WindowManagerFlags.Fullscreen);
             }
             RequestWindowFeature(Android.Views.WindowFeatures.NoTitle);
-            base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
             startButton = (Button)FindViewById(Resource.Id.startButton);
-
             hpBarText = (TextView)FindViewById(Resource.Id.hpBarText);
-
             hpBarGreenMain = (ImageView)FindViewById(Resource.Id.hpBarGreenMain);
             hpBarRedMain = (ImageView)FindViewById(Resource.Id.hpBarRedMain);
-
-            startButton.Click += StartButton_Click;
-            LevelActivity.backPressed += LevelActivity_backPressed;
-
-            intent = new Intent(this, typeof(LevelActivity));
-
-            GetPersonDataAsync();
+            relLayHpBar = (RelativeLayout)FindViewById(Resource.Id.relLayHpBar);
+            hpBarGreenMain.LayoutParameters.Width = 124;
         }
-
-        private void LevelActivity_backPressed()
+        protected override void OnStart()
         {
+            base.OnStart();
+            startButton.Click += StartButton_Click;
+            intent = new Intent(this, typeof(LevelActivity));
+        }
+        protected override void OnResume()
+        {
+            base.OnResume();
+            MessageAndroid.ShortAlert("OnResume MainActivity");
             GetPersonDataAsync();
         }
 
         private async void GetPersonDataAsync()
+        {
+            await Task.Run(() => GetPersonData());
+            MessageAndroid.ShortAlert(personData.HPDino.ToString());
+            MessageAndroid.ShortAlert(relLayHpBar.LayoutParameters.Width.ToString());
+            hpBarGreenMain.LayoutParameters.Width = (personData.HPDino * relLayHpBar.Width) / 100;
+            MessageAndroid.ShortAlert(hpBarGreenMain.LayoutParameters.Width.ToString());
+
+            hpBarText.Text = $"{personData.HPDino}/100 HP";
+        }
+
+        private void GetPersonData()
         {
             string jsonString;
             var backingFile = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "data.json");
@@ -73,17 +86,15 @@ namespace PuzzlerDefender
                     });
                 using (var writer = File.CreateText(backingFile))
                 {
-                    await writer.WriteLineAsync(serializeString); //Async
+                    writer.WriteLine(serializeString);
                 }
             }
             #endregion
             using (var reader = File.ReadAllTextAsync(backingFile))
             {
-                jsonString = await reader;
+                jsonString = reader.Result;
             }
             personData = JsonConvert.DeserializeObject<PersonData>(jsonString);
-            hpBarGreenMain.LayoutParameters.Width = (personData.HPDino * hpBarRedMain.LayoutParameters.Width) / 100;
-            hpBarText.Text = $"{personData.HPDino}/100 HP";
         }
 
         private void StartButton_Click(object sender, System.EventArgs e)

@@ -7,14 +7,13 @@ using Newtonsoft.Json;
 using PuzzlerDefender.Enums;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace PuzzlerDefender
 {
     [Activity(Label = "LevelActivity", LaunchMode = default)]
     public class LevelActivity : Activity, View.IOnClickListener
     {
-        public static event Action backPressed;
-
         TextView hpBarText2;
         TextView brainPowerLevAct;
 
@@ -78,33 +77,44 @@ namespace PuzzlerDefender
 
             backButtonLevels = (Button)FindViewById(Resource.Id.backButtonLevels);
             easyButton = (Button)FindViewById(Resource.Id.easyButton);
-            easyButton.SetOnClickListener(this);
             mediumButton = (Button)FindViewById(Resource.Id.mediumButton);
-            mediumButton.SetOnClickListener(this);
             hardButton = (Button)FindViewById(Resource.Id.hardButton);
+        }
+        protected override void OnStart()
+        {
+            base.OnStart();
+            easyButton.SetOnClickListener(this);
+            mediumButton.SetOnClickListener(this);
             hardButton.SetOnClickListener(this);
             backButtonLevels.Click += BackButtonLevels_Click;
-            GameActivity.backPressed += GameActivity_backPressed;
-            GetPersonDataAsync();
         }
-
-        private void GameActivity_backPressed()
+        protected override void OnResume()
         {
+            base.OnResume();
             GetPersonDataAsync();
         }
-
         private void BackButtonLevels_Click(object sender, EventArgs e)
         {
             OnBackPressed();
         }
         public override void OnBackPressed()
         {
-            backPressed.Invoke();
             base.OnBackPressed();
 
         }
 
         private async void GetPersonDataAsync()
+        {
+            await Task.Run(() => GetPersonData());
+            hpBarGreen.LayoutParameters.Width = (personData.HPDino * hpBarRed.Width) / 100;
+            hpBarText2.Text = $"{personData.HPDino}/100 HP";
+            easyButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 1} HP" : "-1 HP";
+            mediumButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 2} HP" : "-2 HP";
+            hardButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 3} HP" : "-3 HP";
+            brainPowerLevAct.Text = $"Brain Power: {personData.Coins}";
+        }
+
+        private async void GetPersonData()
         {
             string jsonString;
             var backingFile = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "data.json");
@@ -114,12 +124,6 @@ namespace PuzzlerDefender
                 jsonString = await reader;
             }
             personData = JsonConvert.DeserializeObject<PersonData>(jsonString);
-            hpBarGreen.LayoutParameters.Width = (personData.HPDino * hpBarRed.LayoutParameters.Width) / 100;
-            hpBarText2.Text = $"{personData.HPDino}/100 HP";
-            easyButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 1} HP" : "-1 HP";
-            mediumButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 2} HP" : "-2 HP";
-            hardButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 3} HP" : "-3 HP";
-            brainPowerLevAct.Text = $"Brain Power: {personData.Coins}";
         }
     }
 }

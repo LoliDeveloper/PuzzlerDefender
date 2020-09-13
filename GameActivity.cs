@@ -15,7 +15,6 @@ namespace PuzzlerDefender
     [Activity(Label = "GameActivity", LaunchMode = default)]
     public class GameActivity : Activity, View.IOnClickListener
     {
-        public static event Action backPressed;
         Button backButtonGameMain;
         Button one;
         Button two;
@@ -117,7 +116,7 @@ namespace PuzzlerDefender
         }
         private async void IncreaseBarAsync(int toThat)
         {
-            await Task.Run(()=> IncreaseBar(toThat));
+            await Task.Run(() => IncreaseBar(toThat));
         }
         private void IncreaseBar(int toThat)
         {
@@ -279,7 +278,7 @@ namespace PuzzlerDefender
 
         private async void GetPersonDataAsync()
         {
-            await Task.Run(()=> GetPersonData());
+            await Task.Run(() => GetPersonData());
         }
         private void GetPersonData()
         {
@@ -296,7 +295,6 @@ namespace PuzzlerDefender
         }
         public override void OnBackPressed()
         {
-            backPressed.Invoke();
             base.OnBackPressed();
         }
     }
