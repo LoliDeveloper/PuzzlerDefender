@@ -25,15 +25,17 @@ namespace PuzzlerDefender
         Button mediumButton;
         Button hardButton;
 
+        Intent intent;
         PersonData personData;
 
         string easyDif = JsonConvert.SerializeObject(TypeDiff.Easy);
         string mediumDif = JsonConvert.SerializeObject(TypeDiff.Medum);
         string hardDif = JsonConvert.SerializeObject(TypeDiff.Hard);
 
+        int hpBarRedWidth;
+
         public void OnClick(View v)
         {
-            Intent intent;
             switch (v.Id)
             {
                 case Resource.Id.easyButton:
@@ -50,6 +52,12 @@ namespace PuzzlerDefender
                     intent = new Intent(this, typeof(GameActivity));
                     intent.PutExtra("TypeDiff", hardDif);
                     StartActivity(intent);
+                    break;
+                case Resource.Id.backButtonLevels:
+                    MessageAndroid.ShortAlert("BackButtonLevels_Click");
+                    Intent.Dispose();
+                    this.OnBackPressed();
+                    Finish();
                     break;
                 default: throw new Exception("SomeThing wrong...");
             }
@@ -79,6 +87,8 @@ namespace PuzzlerDefender
             easyButton = (Button)FindViewById(Resource.Id.easyButton);
             mediumButton = (Button)FindViewById(Resource.Id.mediumButton);
             hardButton = (Button)FindViewById(Resource.Id.hardButton);
+
+            hpBarRedWidth = hpBarRed.LayoutParameters.Width;
         }
         protected override void OnStart()
         {
@@ -86,27 +96,19 @@ namespace PuzzlerDefender
             easyButton.SetOnClickListener(this);
             mediumButton.SetOnClickListener(this);
             hardButton.SetOnClickListener(this);
-            backButtonLevels.Click += BackButtonLevels_Click;
+            backButtonLevels.SetOnClickListener(this);
         }
         protected override void OnResume()
         {
             base.OnResume();
             GetPersonDataAsync();
         }
-        private void BackButtonLevels_Click(object sender, EventArgs e)
-        {
-            OnBackPressed();
-        }
-        public override void OnBackPressed()
-        {
-            base.OnBackPressed();
-
-        }
 
         private async void GetPersonDataAsync()
         {
             await Task.Run(() => GetPersonData());
-            hpBarGreen.LayoutParameters.Width = (personData.HPDino * hpBarRed.Width) / 100;
+            hpBarGreen.LayoutParameters.Width = (personData.HPDino * hpBarRedWidth) / 100;
+            hpBarGreen.RequestLayout();
             hpBarText2.Text = $"{personData.HPDino}/100 HP";
             easyButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 1} HP" : "-1 HP";
             mediumButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 2} HP" : "-2 HP";

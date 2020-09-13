@@ -19,9 +19,8 @@ namespace PuzzlerDefender
         ImageView hpBarRedMain;
 
         Button startButton;
-        Intent intent;
         TextView hpBarText;
-        RelativeLayout relLayHpBar;
+        Intent intent;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -39,18 +38,17 @@ namespace PuzzlerDefender
             hpBarText = (TextView)FindViewById(Resource.Id.hpBarText);
             hpBarGreenMain = (ImageView)FindViewById(Resource.Id.hpBarGreenMain);
             hpBarRedMain = (ImageView)FindViewById(Resource.Id.hpBarRedMain);
-            relLayHpBar = (RelativeLayout)FindViewById(Resource.Id.relLayHpBar);
-            hpBarGreenMain.LayoutParameters.Width = 124;
+            intent = new Intent(this, typeof(LevelActivity));
+            startButton.Click += StartButton_Click;
         }
         protected override void OnStart()
         {
             base.OnStart();
-            startButton.Click += StartButton_Click;
-            intent = new Intent(this, typeof(LevelActivity));
         }
         protected override void OnResume()
         {
             base.OnResume();
+
             MessageAndroid.ShortAlert("OnResume MainActivity");
             GetPersonDataAsync();
         }
@@ -58,11 +56,8 @@ namespace PuzzlerDefender
         private async void GetPersonDataAsync()
         {
             await Task.Run(() => GetPersonData());
-            MessageAndroid.ShortAlert(personData.HPDino.ToString());
-            MessageAndroid.ShortAlert(relLayHpBar.LayoutParameters.Width.ToString());
-            hpBarGreenMain.LayoutParameters.Width = (personData.HPDino * relLayHpBar.Width) / 100;
-            MessageAndroid.ShortAlert(hpBarGreenMain.LayoutParameters.Width.ToString());
-
+            hpBarGreenMain.LayoutParameters.Width = (personData.HPDino * hpBarRedMain.LayoutParameters.Width) / 100;
+            hpBarGreenMain.RequestLayout();
             hpBarText.Text = $"{personData.HPDino}/100 HP";
         }
 
