@@ -54,10 +54,7 @@ namespace PuzzlerDefender
                     StartActivity(intent);
                     break;
                 case Resource.Id.backButtonLevels:
-                    MessageAndroid.ShortAlert("BackButtonLevels_Click");
-                    Intent.Dispose();
                     this.OnBackPressed();
-                    Finish();
                     break;
                 default: throw new Exception("SomeThing wrong...");
             }
@@ -89,14 +86,52 @@ namespace PuzzlerDefender
             hardButton = (Button)FindViewById(Resource.Id.hardButton);
 
             hpBarRedWidth = hpBarRed.LayoutParameters.Width;
+            //easyButton.SetOnClickListener(this);
+            //mediumButton.SetOnClickListener(this);
+            //hardButton.SetOnClickListener(this);
+            backButtonLevels.SetOnClickListener(this);
+
+            easyButton.Touch += (s, e) =>
+            {
+                if (e.Event.Action == MotionEventActions.Down) 
+                { 
+                    easyButton.SetBackgroundResource(Resource.Drawable.darkGreenBg);
+                }
+                if (e.Event.Action == MotionEventActions.Up)
+                {
+                    easyButton.SetBackgroundResource(Resource.Drawable.damage1GreenButton);
+                    OnClick(easyButton);
+                }
+            };
+            mediumButton.Touch += (s, e) =>
+              {
+                  if (e.Event.Action == MotionEventActions.Down)
+                  {
+                      mediumButton.SetBackgroundResource(Resource.Drawable.darkYellowBg);
+                  }
+                  if (e.Event.Action == MotionEventActions.Up)
+                  {
+                      mediumButton.SetBackgroundResource(Resource.Drawable.damage2OrangeButton);
+                      OnClick(mediumButton);
+                  }
+              };
+            hardButton.Touch += (s, e) =>
+              {
+                  if (e.Event.Action == MotionEventActions.Down)
+                  {
+                      hardButton.SetBackgroundResource(Resource.Drawable.darkRedBg);
+                  }
+                  if (e.Event.Action == MotionEventActions.Up)
+                  {
+                      hardButton.SetBackgroundResource(Resource.Drawable.damage3RedButton); 
+                      OnClick(hardButton);
+                  }
+              };
+
         }
         protected override void OnStart()
         {
             base.OnStart();
-            easyButton.SetOnClickListener(this);
-            mediumButton.SetOnClickListener(this);
-            hardButton.SetOnClickListener(this);
-            backButtonLevels.SetOnClickListener(this);
         }
         protected override void OnResume()
         {

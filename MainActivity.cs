@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
+using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using System.IO;
@@ -39,7 +40,18 @@ namespace PuzzlerDefender
             hpBarGreenMain = (ImageView)FindViewById(Resource.Id.hpBarGreenMain);
             hpBarRedMain = (ImageView)FindViewById(Resource.Id.hpBarRedMain);
             intent = new Intent(this, typeof(LevelActivity));
-            startButton.Click += StartButton_Click;
+            startButton.Touch += (s, e) =>
+                {
+                    if (e.Event.Action == MotionEventActions.Down)
+                    {
+                        startButton.SetBackgroundResource(Resource.Drawable.darkEmptyButton);
+                    }
+                    if (e.Event.Action == MotionEventActions.Up)
+                    {
+                        startButton.SetBackgroundResource(Resource.Drawable.solid_button);
+                        StartButton_Click(this, new System.EventArgs());
+                    }
+                };
         }
         protected override void OnStart()
         {

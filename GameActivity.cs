@@ -123,7 +123,7 @@ namespace PuzzlerDefender
             while (determinateBar.Progress < toThat)
             {
                 determinateBar.Progress += 1;
-                Thread.Sleep(10);
+                Thread.Sleep(5);
             }
         }
 
@@ -160,11 +160,13 @@ namespace PuzzlerDefender
         }
         private void randomizeButton()
         {
+            determinateBar.Progress = 0;
             sixCounter = 0;
             moveCounter = 0;
             int rndNum;
             int hard = 8;
             Random random = new Random();
+            IncreaseBarAsync(10);
             if (typeDiff == TypeDiff.Easy)
             {
                 hard = 1;
@@ -183,9 +185,15 @@ namespace PuzzlerDefender
                 OnBackPressed();
             }
 
+            IncreaseBarAsync(20);
             ViewGroup.LayoutParams ll;
             for (int i = 0; i < hard * 20;)
             {
+                if (i == hard * 10)
+                {
+                    IncreaseBarAsync(80);
+                }
+
                 rndNum = random.Next(0, 8);
 
                 if (emptyTextView.LayoutParameters == arrRightsLayouts[0] && ((rndNum == 3) || (rndNum == 1))
@@ -211,7 +219,9 @@ namespace PuzzlerDefender
                     i++;
                 }
             }
+            IncreaseBarAsync(80);
             UpdateColorButton();
+            IncreaseBarAsync(100);
         }
         private void UpdateColorButton()
         {
@@ -290,7 +300,6 @@ namespace PuzzlerDefender
                 jsonString = reader.Result;
             }
             personData = JsonConvert.DeserializeObject<PersonData>(jsonString);
-            Thread.Sleep(1500);
             IncreaseBarAsync(100);
         }
         public override void OnBackPressed()

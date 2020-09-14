@@ -60,7 +60,7 @@
             android:textSize="20sp"
             android:gravity="center"
             android:textStyle="bold"
-            android:text=""
+            android:text="Loading..."
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </RelativeLayout>
