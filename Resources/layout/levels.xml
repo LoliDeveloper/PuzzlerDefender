@@ -68,7 +68,7 @@
             <TextView
                 android:id="@+id/brainPowerLevAct"
                 android:textSize="18sp"
-                android:text="Brain Power:"
+                android:text="Brain Power"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
@@ -93,7 +93,7 @@
             android:id="@+id/easyButton"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="-1 HP"
+            android:text="Load..."
             android:background="@drawable/damage1greenbutton"
             android:layout_width="100dp"
             android:layout_height="70dp"/>
@@ -105,7 +105,7 @@
             android:id="@+id/mediumButton"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="-2 HP"
+            android:text="Load..."
             android:background="@drawable/damage2orangebutton"
             android:layout_width="100dp"
             android:layout_height="70dp"/>
@@ -117,7 +117,7 @@
             android:id="@+id/hardButton"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="-3 HP"
+            android:text="Load..."
             android:background="@drawable/damage3redbutton"
             android:layout_width="100dp"
             android:layout_height="70dp"/>

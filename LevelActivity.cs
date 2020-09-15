@@ -65,11 +65,14 @@ namespace PuzzlerDefender
             base.OnCreate(savedInstanceState);
 
             // Create your application here
-            if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBean)
+            Task.Run(()=>
             {
-                Window.SetFlags(Android.Views.WindowManagerFlags.Fullscreen,
-                                Android.Views.WindowManagerFlags.Fullscreen);
-            }
+                if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBean)
+                {
+                    Window.SetFlags(Android.Views.WindowManagerFlags.Fullscreen,
+                                    Android.Views.WindowManagerFlags.Fullscreen);
+                }
+            });
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.levels);
@@ -142,12 +145,13 @@ namespace PuzzlerDefender
         private async void GetPersonDataAsync()
         {
             await Task.Run(() => GetPersonData());
-            hpBarGreen.LayoutParameters.Width = (personData.HPDino * hpBarRedWidth) / 100;
+            int maxDamage = personData.Coins * 3 * 5;
+            hpBarGreen.LayoutParameters.Width = (personData.HPDino * hpBarRedWidth) / personData.FullHPDino;
             hpBarGreen.RequestLayout();
-            hpBarText2.Text = $"{personData.HPDino}/100 HP";
-            easyButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 1} HP" : "-1 HP";
-            mediumButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 2} HP" : "-2 HP";
-            hardButton.Text = personData.Coins > 0 ? $"-{personData.Coins * 3} HP" : "-3 HP";
+            hpBarText2.Text = $"{personData.HPDino}/{personData.FullHPDino} HP";
+            easyButton.Text = $"-{maxDamage / 6} HP";
+            mediumButton.Text = $"-{maxDamage / 2} HP";
+            hardButton.Text = $"-{maxDamage} HP";
             brainPowerLevAct.Text = $"Brain Power: {personData.Coins}";
         }
 

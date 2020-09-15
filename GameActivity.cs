@@ -247,11 +247,12 @@ namespace PuzzlerDefender
 
         private async void HitDamage(TypeDiff td)
         {
-            personData.HPDino -= personData.Coins > 0 ? (int)td * personData.Coins : (int)td;
+            personData.HPDino -= (int)td * personData.Coins * 10;
             if (personData.HPDino < 1)
             {
-                personData.HPDino = 100;
                 personData.Coins++;
+                personData.HPDino = personData.Coins * 100;
+                personData.FullHPDino = personData.Coins * 100;
             }
             switch (td)
             {

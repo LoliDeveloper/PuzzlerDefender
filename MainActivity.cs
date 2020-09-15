@@ -68,9 +68,9 @@ namespace PuzzlerDefender
         private async void GetPersonDataAsync()
         {
             await Task.Run(() => GetPersonData());
-            hpBarGreenMain.LayoutParameters.Width = (personData.HPDino * hpBarRedMain.LayoutParameters.Width) / 100;
+            hpBarGreenMain.LayoutParameters.Width = (personData.HPDino * hpBarRedMain.LayoutParameters.Width) / personData.FullHPDino;
             hpBarGreenMain.RequestLayout();
-            hpBarText.Text = $"{personData.HPDino}/100 HP";
+            hpBarText.Text = $"{personData.HPDino}/{personData.FullHPDino} HP";
         }
 
         private void GetPersonData()
@@ -84,11 +84,12 @@ namespace PuzzlerDefender
                 serializeString = JsonConvert.SerializeObject(
                     new PersonData(40, 10)
                     {
-                        EasySecRecord = 0,
-                        HardSecRecord = 0,
+                        EasySecRecord = int.MaxValue,
+                        HardSecRecord = int.MaxValue,
                         HPDino = 100,
-                        MediumSecRecord = 0,
-                        Coins = 0,
+                        FullHPDino = 100,
+                        MediumSecRecord = int.MaxValue,
+                        Coins = 1,
                         StatusData = "Okay"
                     });
                 using (var writer = File.CreateText(backingFile))
