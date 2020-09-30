@@ -247,7 +247,7 @@ namespace PuzzlerDefender
 
         private async void HitDamage(TypeDiff td)
         {
-            personData.HPDino -= (int)td * personData.Coins * 10;
+            personData.HPDino -=  personData.Coins * 3 * 5 / (int)td;
             if (personData.HPDino < 1)
             {
                 personData.Coins++;

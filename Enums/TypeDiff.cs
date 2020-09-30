@@ -2,8 +2,8 @@
 {
     public enum TypeDiff
     {
-        Easy = 1,
+        Easy = 6,
         Medum = 2,
-        Hard = 3
+        Hard = 1
     }
 }
