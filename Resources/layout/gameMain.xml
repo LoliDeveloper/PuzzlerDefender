@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:background="#ffffff"
     android:layout_width="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/diffText"
@@ -135,4 +136,18 @@
         android:id="@+id/backButtonGameMain"
         android:layout_width="200dp"
         android:layout_height="50dp"/>
+    <View
+
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+        <com.google.android.gms.ads.AdView
+         android:id="@+id/adView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         ads:adSize="SMART_BANNER"
+         ads:adUnitId="@string/banner_ad_unit_id">
+    </com.google.android.gms.ads.AdView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
 </LinearLayout>

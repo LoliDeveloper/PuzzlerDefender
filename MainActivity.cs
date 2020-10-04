@@ -34,6 +34,11 @@ namespace PuzzlerDefender
             RequestWindowFeature(Android.Views.WindowFeatures.NoTitle);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
+
+            //реклама
+            var id = "ca-app-pub-1112378847464394~6063620015";
+            Android.Gms.Ads.MobileAds.Initialize(ApplicationContext, id);
+            //--------------------
             SetContentView(Resource.Layout.activity_main);
             startButton = (Button)FindViewById(Resource.Id.startButton);
             hpBarText = (TextView)FindViewById(Resource.Id.hpBarText);

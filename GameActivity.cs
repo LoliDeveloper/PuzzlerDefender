@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Gms.Ads;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -34,6 +35,8 @@ namespace PuzzlerDefender
 
         ProgressBar determinateBar;
 
+        AdView adView;
+
         int rightColor = 0;
         TypeDiff typeDiff;
         int moveCounter;
@@ -61,6 +64,9 @@ namespace PuzzlerDefender
             diffText = (TextView)FindViewById(Resource.Id.diffText);
             backButtonGameMain = (Button)FindViewById(Resource.Id.backButtonGameMain);
             determinateBar = (ProgressBar)FindViewById(Resource.Id.determinateBar);
+            //реклама
+            adView = FindViewById<AdView>(Resource.Id.adView);
+            //-----------------
         }
         protected override void OnStart()
         {
@@ -108,6 +114,8 @@ namespace PuzzlerDefender
             base.OnResume();
             GetPersonDataAsync();
             randomizeButton();
+            var adRequest = new AdRequest.Builder().Build();
+            adView.LoadAd(adRequest);
         }
 
         private void BackButtonGameMain_Click(object sender, EventArgs e)
